@@ -1,3 +1,5 @@
+# https://codingcompetitions.withgoogle.com/kickstart/round/000000000019ff43/0000000000337b4d#problem
+
 def input_numbers(t=int):
     return map(t, input().split())
 
@@ -60,4 +62,4 @@ for _c in range(1, T+1):
         else:
             w, v = W.query(a, b), V.query(a, b)
             ans += (w - (a-1)*v) * _sign(a)
-    print(f"Case #{_c}: {-ans}")
+    print(f"Case #{_c}: {ans}")
