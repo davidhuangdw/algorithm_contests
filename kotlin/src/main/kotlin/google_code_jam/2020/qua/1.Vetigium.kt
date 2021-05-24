@@ -1,4 +1,4 @@
-package code.jam.`2020`.qua
+package google_code_jam.`2020`.qua
 
 
 fun main(){

@@ -1,4 +1,4 @@
-package code.jam.`2020`.qua
+package google_code_jam.`2020`.qua
 // https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd27/0000000000209a9f#problem
 
 fun paired(S: String): String{

@@ -1,4 +1,4 @@
-package code.jam.`2020`.qua
+package google_code_jam.`2020`.qua
 // https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd27/000000000020bdf9
 
 fun assign(intervals: List<List<Int>>): String{
