@@ -1,4 +1,4 @@
-package google_kickstart.`2020`.B
+package google_kickstart.`2021`.B
 
 fun split_input(): List<String> = readLine()!!.trim().split(" ")
 fun input_ints() = split_input().map{it.toInt()}
