@@ -3,6 +3,23 @@ package leetcode
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.util.*
+import kotlin.collections.ArrayDeque
+
+class SortedMultiSet<T>(val map: TreeMap<T, Int> = TreeMap()): MutableSet<T> by map.keys{
+    override fun add(element: T): Boolean {
+        map[element] = map.getOrDefault(element, 0) + 1
+        return true
+    }
+
+    override fun remove(element: T): Boolean {
+        if(element !in map) return false
+        val cnt = map[element]!!
+        if(cnt == 1) map.remove(element)
+        else map[element] = cnt - 1
+        return true
+    }
+}
 
 class ListNode(var `val`: Int) {
     var next: ListNode? = null
@@ -113,7 +130,8 @@ fun parseArray(s: String): List<String> {
             ']' -> {
                 extra -= 1
                 if (extra == 0) {
-                    subs.add(input.substring(l, i).trim())
+                    if(l != i)
+                        subs.add(input.substring(l, i).trim())
                     l = i + 1
                 }
             }
@@ -179,5 +197,25 @@ class TestLeetUtils {
         root = TreeNode.fromLayerOrderList(list)
         assertEquals(list, TreeNode.toLayerdOrderList(root))
 
+    }
+
+    @Test
+    fun testSortedMultiSet(){
+        val x = SortedMultiSet<Int>()
+        val vs = listOf(5, 2, 3, 1, 1, 2, 4, 3)
+        for(v in vs) x.add(v)
+        x.remove(1)
+        assertEquals(1, x.minOrNull())
+        x.remove(1)
+        assertEquals(2, x.minOrNull())
+        x.remove(3)
+        x.remove(2)
+        assertEquals(2, x.minOrNull())
+        x.remove(2)
+        assertEquals(3, x.minOrNull())
+        x.remove(3)
+        assertEquals(4, x.minOrNull())
+        x.remove(4)
+        assertEquals(5, x.minOrNull())
     }
 }
