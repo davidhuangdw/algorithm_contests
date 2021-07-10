@@ -21,8 +21,8 @@ class SortedMultiSet<T>(val map: TreeMap<T, Int> = TreeMap()): MutableSet<T> by 
     }
 }
 
-class ListNode(var `val`: Int) {
-    var next: ListNode? = null
+class ListNode(var `val`: Int, var next: ListNode? = null) {
+    fun toArr() = ListNode.toArr(this)
 
     companion object {
         fun fromArr(arr: IntArray): ListNode? {
@@ -50,6 +50,8 @@ class ListNode(var `val`: Int) {
 class TreeNode(var `val`: Int) {
     var left: TreeNode? = null
     var right: TreeNode? = null
+    fun toPreOrderList() = TreeNode.toPreOrderList(this)
+    fun toLayerdOrderList() = TreeNode.toLayerdOrderList(this)
 
     companion object {
         fun fromPreOrderList(arr: List<Int?>): TreeNode? {
