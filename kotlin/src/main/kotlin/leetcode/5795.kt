@@ -5,49 +5,52 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 class MinCost {
+    // key idea:
+    // 1. (time, city) as index(vertex)
+    // 2. no cycle(able to O(n) topo-order update): because only old time update later time
     fun minCost(maxTime: Int, edges: Array<IntArray>, passingFees: IntArray): Int {
+        val MX = 1e8.toInt()
         val n = passingFees.size
-        val adj = List(n) { hashMapOf<Int, Int>() }
-        for (e in edges) {
-            val (a, b, t) = e
-            adj[a][b] = minOf(adj[a].getOrDefault(b, Int.MAX_VALUE), t)
-            adj[b][a] = minOf(adj[b].getOrDefault(a, Int.MAX_VALUE), t)
-        }
-        val min_time = MutableList(n) { Int.MAX_VALUE }
+        val adj = List(n) { hashSetOf<Int>() }
+        val min_cost = List(maxTime + 1) { MutableList(n) { MX } }
+        min_cost[0][0] = passingFees[0]
 
-        data class Node(val c: Long, val i: Int, val t: Int) : Comparable<Node> {
-            override fun compareTo(other: Node): Int {
-                if (c != other.c) return compareValues(c, other.c)
-                return t - other.t
+        for(t in 1..maxTime){
+            for((a, b, et) in edges){
+                val pre = t - et
+                if(pre >= 0){
+                    min_cost[t][a] = minOf(min_cost[t][a], min_cost[pre][b] + passingFees[a])
+                    min_cost[t][b] = minOf(min_cost[t][b], min_cost[pre][a] + passingFees[b])
+                }
             }
         }
 
-        val que = PriorityQueue<Node>()
-        que.add(Node(0L + passingFees[0], 0, 0))
-        min_time[0] = 0
-        while (que.isNotEmpty()) {
-            val (c, t, i) = que.poll()
-            for ((j, et) in adj[i]) {
-                val tj = t + et
-                val jc = c + passingFees[j]
-                if (tj > maxTime) continue
-                if (tj >= min_time[j]) continue
-                min_time[j] = tj
-                if (j == n - 1) return jc.toInt()
-                que.add(Node(jc, tj, j))
-            }
-        }
-        return -1
+        val cost = (0..maxTime).fold(MX) { x, t -> minOf(x, min_cost[t][n - 1]) }
+        return if (cost == MX) -1 else cost
     }
-    // todo: to fix
 
 
     @Test
     fun test1() {
         assertEquals(
-            11,
-            minCost(
+            11, minCost(
                 30,
+                parse2dIntArray("[[0,1,10],[1,2,10],[2,5,10],[0,3,1],[3,4,10],[4,5,15]]"),
+                parseIntArray("[5,1,2,20,20,3]")
+            )
+        )
+
+        assertEquals(
+            48, minCost(
+                29,
+                parse2dIntArray("[[0,1,10],[1,2,10],[2,5,10],[0,3,1],[3,4,10],[4,5,15]]"),
+                parseIntArray("[5,1,2,20,20,3]")
+            )
+        )
+
+        assertEquals(
+            -1, minCost(
+                25,
                 parse2dIntArray("[[0,1,10],[1,2,10],[2,5,10],[0,3,1],[3,4,10],[4,5,15]]"),
                 parseIntArray("[5,1,2,20,20,3]")
             )
