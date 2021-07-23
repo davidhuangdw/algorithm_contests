@@ -149,6 +149,8 @@ fun parseArray(s: String): List<String> {
 inline fun <reified T> parseNullableTypedList(s: String, convert: (String) -> T) =
     parseArray(s).map { if (it.trim() == "null") null else convert(it) }
 
+fun parse2dStringList(s: String) = parseArray(s).map{parseArray(it)}
+
 inline fun <reified T> parseTypedArray(s: String, convert: (String) -> T): Array<T> =
     parseNullableTypedList(s, convert).map { it!! }.toTypedArray()
 

@@ -5,6 +5,18 @@ import org.junit.jupiter.api.Test
 
 class Find132pattern {
     fun find132pattern(nums: IntArray): Boolean {
+        var max2 = Int.MIN_VALUE
+        val cand = mutableListOf<Int>()
+        for (v in nums.reversed()) {
+            if (v < max2) return true
+            while (cand.isNotEmpty() && cand.last() < v)
+                max2 = cand.removeAt(cand.size - 1)
+            cand.add(v)
+        }
+        return false
+    }
+
+    fun find132pattern1(nums: IntArray): Boolean {
         var lmin = nums[0]
         val st = ArrayDeque<Pair<Int, Int>>()
         for (i in 1 until nums.size) {
