@@ -4,7 +4,6 @@ import (
 	"bufio"
 	. "fmt"
 	"io"
-	"os"
 )
 
 var (
@@ -27,7 +26,7 @@ func init() {
 	}
 }
 
-func main() { Problem2(os.Stdin, os.Stdout) }
+//func main() { Problem2(os.Stdin, os.Stdout) }
 
 func Problem2(input io.Reader, output io.Writer) {
 	IN := bufio.NewReader(input)
