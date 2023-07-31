@@ -3,6 +3,7 @@ io/
 
 .idea
 .DS_Store
+.vscode
 
 ### IntelliJ IDEA ###
 .idea
