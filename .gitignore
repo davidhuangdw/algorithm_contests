@@ -1,5 +1,6 @@
 crawled/
 io/
+tmp/
 
 .idea
 .DS_Store
