@@ -31,9 +31,9 @@ fun main() {
             }
             if (rem != 0) return "IMPOSSIBLE\n"
             return buildString {
-                appendln(path.size)
+//                appendln(path.size)
                 for ((i, j) in path) {
-                    appendln("$i $j")
+//                    appendln("$i $j")
                 }
             }
         }
