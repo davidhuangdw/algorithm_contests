@@ -38,3 +38,34 @@ func createTree(values []interface{}) *TreeNode {
 
 	return root
 }
+
+// Helper function to convert a tree to slice representation (level order)
+func treeToSlice(root *TreeNode) []interface{} {
+	if root == nil {
+		return []interface{}{}
+	}
+
+	var result []interface{}
+	queue := []*TreeNode{root}
+
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+
+		if node == nil {
+			result = append(result, nil)
+			continue
+		}
+
+		result = append(result, node.Val)
+		queue = append(queue, node.Left)
+		queue = append(queue, node.Right)
+	}
+
+	// Remove trailing nil values
+	for len(result) > 0 && result[len(result)-1] == nil {
+		result = result[:len(result)-1]
+	}
+
+	return result
+}

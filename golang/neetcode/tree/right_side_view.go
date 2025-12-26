@@ -21,7 +21,7 @@ func rightSideView1(root *TreeNode) (ans []int) { // bfs
 	return
 }
 
-func rightSideView(root *TreeNode) (ans []int) { // dfs
+func rightSideView(root *TreeNode) (ans []int) { // dfs, depth as index
 	var dfs func(*TreeNode, int)
 	dfs = func(nd *TreeNode, d int) {
 		if nd == nil {
