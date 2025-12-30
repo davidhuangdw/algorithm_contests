@@ -78,7 +78,7 @@ func TestExist(t *testing.T) {
 				{'C', 'D'},
 			},
 			word:     "ABD",
-			expected: false, // Can't reuse B
+			expected: true,
 		},
 		{
 			name: "complex path with backtracking",
@@ -88,7 +88,7 @@ func TestExist(t *testing.T) {
 				{'G', 'H', 'I'},
 			},
 			word:     "ABEDH",
-			expected: true,
+			expected: false,
 		},
 		{
 			name: "word longer than board area",
@@ -123,7 +123,7 @@ func TestExist(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := exist(tt.board, tt.word)
-			assert.Equal(t, tt.expected, result, 
+			assert.Equal(t, tt.expected, result,
 				"exist(%v, %s) should be %v", tt.board, tt.word, tt.expected)
 		})
 	}
