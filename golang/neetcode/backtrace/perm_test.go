@@ -1,7 +1,6 @@
 package backtrace
 
 import (
-	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -68,22 +67,4 @@ func TestPermute(t *testing.T) {
 				"permute(%v) should equal %v", tt.nums, tt.expected)
 		})
 	}
-}
-
-// Helper function to sort permutations for consistent comparison
-func sortPermutations(permutations [][]int) {
-	// Sort each permutation
-	for _, perm := range permutations {
-		sort.Ints(perm)
-	}
-
-	// Sort the list of permutations
-	sort.Slice(permutations, func(i, j int) bool {
-		for k := 0; k < len(permutations[i]) && k < len(permutations[j]); k++ {
-			if permutations[i][k] != permutations[j][k] {
-				return permutations[i][k] < permutations[j][k]
-			}
-		}
-		return len(permutations[i]) < len(permutations[j])
-	})
 }
