@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ProblemX(IN io.Reader, OUT io.Writer) {
+func P(IN io.Reader, OUT io.Writer) {
 }
 
 func main() {
@@ -15,5 +15,5 @@ func main() {
 	defer func() {
 		OUT.Flush()
 	}()
-	ProblemX(IN, OUT)
+	P(IN, OUT)
 }
