@@ -97,7 +97,7 @@ func TestMatchLen(t *testing.T) {
 			tar:         "abc",
 			pat:         "",
 			expected:    []int{0, 0, 0},
-			description: "Empty pattern returns all zeros",
+			description: "Empty pattern returns nodes zeros",
 		},
 		{
 			name:        "Single character exact match",
