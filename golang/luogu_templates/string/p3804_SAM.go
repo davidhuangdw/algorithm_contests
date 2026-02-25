@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
-	"os"
 	"slices"
 )
 
@@ -111,11 +109,11 @@ func P3804_SAM(IN io.Reader, OUT io.Writer) {
 	fmt.Fprintln(OUT, mx)
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P3804_SAM(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P3804_SAM(IN, OUT)
+//}

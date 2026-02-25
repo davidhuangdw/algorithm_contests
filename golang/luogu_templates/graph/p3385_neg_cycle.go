@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
-	"os"
 )
 
 func hasNegCycle(adj [][][]int) bool {
@@ -58,11 +56,11 @@ func P3385_neg_cycle(IN io.Reader, OUT io.Writer) {
 	}
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P3385_neg_cycle(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P3385_neg_cycle(IN, OUT)
+//}
