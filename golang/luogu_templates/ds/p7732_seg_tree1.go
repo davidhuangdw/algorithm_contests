@@ -83,7 +83,7 @@ func (se *SegTree) fullAdd(i, il, ir, add int) {
 	se._lazy[i] += add
 }
 
-func P(IN io.Reader, OUT io.Writer) {
+func P7732_seg_tree1(IN io.Reader, OUT io.Writer) {
 	var n, m int
 	fmt.Fscan(IN, &n, &m)
 	nums := make([]int, n+1)
@@ -111,5 +111,5 @@ func P(IN io.Reader, OUT io.Writer) {
 //	defer func() {
 //		OUT.Flush()
 //	}()
-//	P3367_union_find_set(IN, OUT)
+//	P7732_seg_tree1(IN, OUT)
 //}

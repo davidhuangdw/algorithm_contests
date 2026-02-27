@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"container/heap"
 	"fmt"
 	"io"
-	"os"
 )
 
 func shortestPathJohnson(adj [][][2]int) [][]int {
@@ -100,11 +98,11 @@ func P5905_shortest_path_neg_johnson(IN io.Reader, OUT io.Writer) {
 
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P5905_shortest_path_neg_johnson(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P5905_shortest_path_neg_johnson(IN, OUT)
+//}
