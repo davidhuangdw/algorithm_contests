@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
-	"os"
 )
 
 func diffConstraints(n int, constraints [][3]int) []int {
@@ -65,11 +63,11 @@ func P5960_diff_constraints(IN io.Reader, OUT io.Writer) {
 	fmt.Fprintln(OUT)
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P5960_diff_constraints(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P5960_diff_constraints(IN, OUT)
+//}

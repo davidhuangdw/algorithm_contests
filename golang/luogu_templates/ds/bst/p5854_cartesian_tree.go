@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
-	"os"
 )
 
 func buildCartesianTree(w []int) (chd [][2]int) {
@@ -42,11 +40,11 @@ func P5854_cartesian_tree(IN io.Reader, OUT io.Writer) {
 	fmt.Fprintf(OUT, "%v %v\n", la, ra)
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P5854_cartesian_tree(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P5854_cartesian_tree(IN, OUT)
+//}

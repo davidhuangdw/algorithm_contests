@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
-	"os"
 )
 
 func modInv2(a, p int) int {
@@ -48,11 +46,11 @@ func P5431_mod_inv2(IN io.Reader, OUT io.Writer) {
 	fmt.Fprintln(OUT, p5431(a, n, p, k))
 }
 
-func main() {
-	IN := bufio.NewReader(os.Stdin)
-	OUT := bufio.NewWriter(os.Stdout)
-	defer func() {
-		OUT.Flush()
-	}()
-	P5431_mod_inv2(IN, OUT)
-}
+//func main() {
+//	IN := bufio.NewReader(os.Stdin)
+//	OUT := bufio.NewWriter(os.Stdout)
+//	defer func() {
+//		OUT.Flush()
+//	}()
+//	P5431_mod_inv2(IN, OUT)
+//}
