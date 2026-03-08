@@ -1,4 +1,4 @@
-package leetcode
+package main
 
 func maxPathSum(root *TreeNode) int {
 	mx := root.Val

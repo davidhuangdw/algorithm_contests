@@ -1,4 +1,4 @@
-package leetcode
+package main
 
 func maxSlidingWindow(nums []int, k int) []int {
 	var que []int

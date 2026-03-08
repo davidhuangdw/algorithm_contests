@@ -1,4 +1,4 @@
-package leetcode
+package main
 
 func minimizedMaximum(n int, quantities []int) int {
 	poss := func(mx int) bool{

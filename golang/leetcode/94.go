@@ -1,4 +1,4 @@
-package leetcode
+package main
 
 func inorderTraversal(root *TreeNode) []int {
 	var order []int

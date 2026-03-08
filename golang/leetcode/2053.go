@@ -1,4 +1,4 @@
-package leetcode
+package main
 
 func kthDistinct(arr []string, k int) string {
 	cnt := map[string]int{}
