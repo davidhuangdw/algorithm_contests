@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -102,9 +101,4 @@ func palindromePath(n int, edges [][]int, s string, queries []string) []bool {
 		}
 	}
 	return ans
-}
-
-func main() {
-	result := palindromePath(4, [][]int{{0, 1}, {0, 2}, {0, 3}}, "abca", []string{"query 1 2", "update 0 b", "query 2 3", "update 3 a", "query 1 3"})
-	fmt.Println(result)
 }
