@@ -8,10 +8,10 @@ func Test_almostPalindromic(t *testing.T) {
 		want int
 	}{
 		{"abacaba", 7},
-		{"abcdef", 3},
+		{"abcdef", 2},
 		{"a", 1},
 		{"aa", 2},
-		{"abc", 3},
+		{"abc", 2},
 		{"racecar", 7},
 		{"abcdcba", 7},
 	}
