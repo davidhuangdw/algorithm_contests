@@ -13,6 +13,30 @@ type ListNode struct {
 	Next *ListNode
 }
 
+// toList converts a slice of integers to a linked list.
+func toList(vals []int) *ListNode {
+	if len(vals) == 0 {
+		return nil
+	}
+	head := &ListNode{Val: vals[0]}
+	curr := head
+	for i := 1; i < len(vals); i++ {
+		curr.Next = &ListNode{Val: vals[i]}
+		curr = curr.Next
+	}
+	return head
+}
+
+// fromList converts a linked list back to a slice of integers.
+func fromList(head *ListNode) []int {
+	var vals []int
+	for head != nil {
+		vals = append(vals, head.Val)
+		head = head.Next
+	}
+	return vals
+}
+
 type Heap[T any] struct {
 	a    []T
 	less func(a, b T) bool
