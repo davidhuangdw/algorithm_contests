@@ -23,7 +23,6 @@ func interactionCosts(n int, edges [][]int, group []int) int64 {
 			}
 		}
 		total += (cnt - pc) - pc
-		return
 	}
 
 	grp := make(map[int]bool)
