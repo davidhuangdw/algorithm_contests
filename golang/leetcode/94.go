@@ -3,7 +3,7 @@ package main
 func inorderTraversal(root *TreeNode) []int {
 	var order []int
 	var st []*TreeNode
-	pop := func() *TreeNode{
+	pop := func() *TreeNode {
 		l := len(st)
 		v := st[l-1]
 		st = st[:l-1]
@@ -15,7 +15,7 @@ func inorderTraversal(root *TreeNode) []int {
 		if x != nil {
 			st = append(st, x)
 			x = x.Left
-		}else{
+		} else {
 			x = pop()
 			order = append(order, x.Val)
 			x = x.Right
