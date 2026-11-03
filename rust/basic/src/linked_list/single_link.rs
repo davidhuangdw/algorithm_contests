@@ -9,7 +9,7 @@ pub struct ListNode {
 }
 
 pub struct List {
-    pub head: Link,
+    head: Link,
 }
 
 impl List {
@@ -23,77 +23,235 @@ impl List {
         }
         Self { head }
     }
+
+    pub fn reverse(&mut self) {
+        let mut p = self.head.take();
+        while let Some(mut first) = p {
+            p = first.next.take();
+            first.next = self.head.take();
+            self.head = Some(first);
+        }
+    }
+
     pub fn to_vec(&self) -> Vec<i32> {
         self.iter().map(|node| node.val).collect()
     }
+
     pub fn iter(&self) -> impl Iterator<Item = &ListNode> {
         std::iter::successors(self.head.as_deref(), |node| node.next.as_deref())
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.head.is_none()
+    }
+
+    pub fn len(&self) -> usize {
+        self.iter().count()
+    }
+
+    pub fn peek(&self) -> Option<&i32> {
+        self.head.as_deref().map(|x| &x.val)
+    }
+
+    pub fn clear(&mut self) {
+        self.head = None;
+    }
+
+    pub fn push_front(&mut self, v: i32) {
+        self.head = Some(Box::new(ListNode {
+            val: v,
+            next: self.head.take(),
+        }));
+    }
+
+    pub fn pop_front(&mut self) -> Option<i32> {
+        let head = self.head.take()?;
+        self.head = head.next;
+        Some(head.val)
+    }
+
+    pub fn push_back(&mut self, v: i32) {
+        let mut p = &mut self.head;
+        while let Some(node) = p {
+            p = &mut node.next;
+        }
+        p.replace(Box::new(ListNode { val: v, next: None }));
+    }
+
+    pub fn pop_back(&mut self) -> Option<i32> {
+        let mut p = &mut self.head;
+        while p.as_ref()?.next.is_some() {
+            p = &mut p.as_mut()?.next;
+        }
+        p.take().map(|p| p.val)
+    }
+
+    pub fn remove(&mut self, k: usize) -> Option<i32> {
+        let mut p = &mut self.head;
+        for _ in 0..k {
+            p = &mut p.as_mut()?.next;
+        }
+        let cur = p.take()?;
+        *p = cur.next;
+        Some(cur.val)
+    }
+
+    pub fn insert(&mut self, k: usize, v: i32) -> bool {
+        let mut p = &mut self.head;
+        for _ in 0..k {
+            match p.as_mut() {
+                Some(x) => p = &mut x.next,
+                _ => return false,
+            }
+        }
+        let next = p.take();
+        p.replace(Box::new(ListNode { val: v, next }));
+        true
     }
 }
 
 impl Display for List {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut p = &self.head;
-        while let Some(node) = p {
-            write!(f, "{} -> ", node.val)?;
-            p = &node.next;
+        for p in self.iter() {
+            write!(f, "{} -> ", p.val)?;
         }
         write!(f, "None")?;
         Ok(())
     }
 }
 
+// todo: nth_mut(self, n); merge(a,b), split_at(k), kth_from_end(k), rotate(self, k)
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn from_vec_handles_empty_input() {
-        let list = List::from_slice(&[]);
-        assert!(list.head.is_none());
-        assert!(list.iter().next().is_none());
-        assert_eq!(Vec::<i32>::new(), list.to_vec());
+    fn list(v: &[i32]) -> List {
+        List::from_slice(v)
     }
 
     #[test]
-    fn from_vec_builds_list_in_order() {
-        let v = vec![-2, 3, 3, 5, 0];
-        let list = List::from_slice(&v);
-        assert_eq!(v, list.to_vec());
-        assert_eq!(-2, list.head.as_ref().unwrap().val);
-        // Every suffix of the input is a valid sub-list.
-        assert_eq!(
-            vec![3, 3, 5, 0],
-            list.iter().skip(1).map(|n| n.val).collect::<Vec<_>>()
-        );
-
-        let single = List::from_slice(&[7]);
-        assert_eq!(vec![7], single.to_vec());
-        assert!(single.head.as_ref().unwrap().next.is_none());
+    fn empty_list_reports_nothing() {
+        let mut l = list(&[]);
+        assert!(l.is_empty());
+        assert_eq!(0, l.len());
+        assert_eq!(None, l.peek());
+        assert_eq!(None, l.pop_front());
+        assert_eq!(None, l.pop_back());
+        assert_eq!(None, l.remove(0));
+        assert_eq!("None", l.to_string());
     }
 
     #[test]
-    fn iter_yields_nodes_in_order() {
-        let list = List::from_slice(&[1, 2, 3]);
-        let vals: Vec<i32> = list.iter().map(|node| node.val).collect();
-        assert_eq!(vec![1, 2, 3], vals);
+    fn from_slice_builds_in_order() {
+        let l = list(&[-2, 3, 3, 5, 0]);
+        assert_eq!(vec![-2, 3, 3, 5, 0], l.to_vec());
+        assert_eq!(5, l.len());
+        assert!(!l.is_empty());
+        assert_eq!(Some(&-2), l.peek());
     }
 
     #[test]
-    fn iter_ends_after_last_node() {
-        let single = List::from_slice(&[9]);
-        let mut it = single.iter();
-        assert_eq!(Some(9), it.next().map(|node| node.val));
-        assert!(it.next().is_none());
+    fn push_and_pop_front_are_lifo() {
+        let mut l = list(&[2, 3]);
+        l.push_front(1);
+        assert_eq!(vec![1, 2, 3], l.to_vec());
+        assert_eq!(Some(1), l.pop_front());
+        assert_eq!(vec![2, 3], l.to_vec());
     }
 
     #[test]
-    fn display_joins_values_with_arrow() {
-        assert_eq!(
-            "1 -> 2 -> 3 -> None",
-            List::from_slice(&[1, 2, 3]).to_string()
-        );
-        assert_eq!("9 -> None", List::from_slice(&[9]).to_string());
-        assert_eq!("None", List::from_slice(&[]).to_string());
+    fn push_and_pop_back_are_fifo() {
+        let mut l = list(&[]);
+        l.push_back(1);
+        l.push_back(2);
+        assert_eq!(vec![1, 2], l.to_vec());
+        assert_eq!(Some(2), l.pop_back());
+        assert_eq!(Some(1), l.pop_back());
+        assert!(l.pop_back().is_none());
+    }
+
+    #[test]
+    fn insert_and_remove_by_index() {
+        let mut l = list(&[1, 3]);
+        assert!(l.insert(1, 2));
+        assert!(l.insert(3, 4));
+        assert!(!l.insert(99, 0));
+        assert_eq!(vec![1, 2, 3, 4], l.to_vec());
+
+        assert_eq!(Some(2), l.remove(1));
+        assert_eq!(Some(1), l.remove(0));
+        assert_eq!(None, l.remove(99));
+        assert_eq!(vec![3, 4], l.to_vec());
+    }
+
+    #[test]
+    fn remove_covers_tail_and_empties_list() {
+        let mut l = list(&[1, 2, 3]);
+        assert_eq!(Some(3), l.remove(2));
+        assert_eq!(vec![1, 2], l.to_vec());
+
+        let mut single = list(&[7]);
+        assert_eq!(Some(7), single.remove(0));
+        assert!(single.is_empty());
+
+        let mut drained = list(&[1, 2, 3]);
+        let mut removed = Vec::new();
+        while let Some(v) = drained.remove(0) {
+            removed.push(v);
+        }
+        assert_eq!(vec![1, 2, 3], removed);
+        assert!(drained.is_empty());
+    }
+
+    #[test]
+    fn insert_covers_head_and_empty_list() {
+        let mut l = list(&[2, 3]);
+        assert!(l.insert(0, 1));
+        assert_eq!(vec![1, 2, 3], l.to_vec());
+
+        let mut empty = list(&[]);
+        assert!(empty.insert(0, 9));
+        assert_eq!(vec![9], empty.to_vec());
+
+        // One past the end is the first rejected index.
+        let mut single = list(&[1]);
+        assert!(!single.insert(2, 9));
+        assert_eq!(vec![1], single.to_vec());
+    }
+
+    #[test]
+    fn clear_resets_list() {
+        let mut l = list(&[1, 2, 3]);
+        assert_eq!("1 -> 2 -> 3 -> None", l.to_string());
+        l.clear();
+        assert!(l.is_empty());
+        assert_eq!("None", l.to_string());
+    }
+    #[test]
+    fn reverse_flips_order_in_place() {
+        let mut l = list(&[1, 2, 3]);
+        l.reverse();
+        assert_eq!(vec![3, 2, 1], l.to_vec());
+        assert_eq!(3, l.len());
+        assert_eq!(Some(&3), l.peek());
+        // The old head is now the tail and must not dangle.
+        assert!(l.iter().last().is_some_and(|node| node.next.is_none()));
+
+        l.reverse();
+        assert_eq!(vec![1, 2, 3], l.to_vec()); // Reversing twice restores the original order.
+
+        let mut even = list(&[1, 2, 3, 4]);
+        even.reverse();
+        assert_eq!(vec![4, 3, 2, 1], even.to_vec()); // Even length.
+
+        let mut single = list(&[7]);
+        single.reverse();
+        assert_eq!(vec![7], single.to_vec()); // Single node.
+
+        let mut empty = list(&[]);
+        empty.reverse();
+        assert!(empty.is_empty());
+        assert_eq!("None", empty.to_string()); // None of the above may panic.
     }
 }
