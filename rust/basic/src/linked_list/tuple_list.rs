@@ -5,7 +5,11 @@ pub enum Lst<T> {
     Nil,
 }
 
-use std::{fmt::Display, iter, mem::{take,replace}};
+use std::{
+    fmt::Display,
+    iter,
+    mem::{replace, take},
+};
 
 use Lst::*;
 
@@ -41,10 +45,11 @@ impl<T> Lst<T> {
     }
 
     pub fn pop_front(&mut self) -> Option<T> {
-        let Con(v, nxt) = replace(self, Nil) else { return None };
+        let Con(v, nxt) = replace(self, Nil) else {
+            return None;
+        };
         *self = *nxt;
         Some(v)
-
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &T> {
