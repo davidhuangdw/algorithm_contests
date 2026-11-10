@@ -1,3 +1,4 @@
+use crate::linked_list::Seq;
 use std::fmt::Display;
 
 #[derive(Debug)]
@@ -121,6 +122,39 @@ impl<T> AList<T> {
     }
 }
 
+impl<T> Seq<T> for AList<T> {
+    fn new() -> Self
+    where
+        T: Default,
+    {
+        AList::new()
+    }
+
+    fn len(&self) -> usize {
+        AList::len(self)
+    }
+
+    fn push_front(&mut self, v: T) {
+        AList::push_front(self, v);
+    }
+
+    fn pop_front(&mut self) -> Option<T> {
+        AList::pop_front(self)
+    }
+    
+    fn push_back(&mut self, v: T) {
+        AList::push_back(self, v);
+    }
+    
+    fn pop_back(&mut self) -> Option<T> {
+        AList::pop_back(self)
+    }
+
+    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_> {
+        Box::new(AList::iter(self).map(|node| &node.val))
+    }
+}
+
 impl<T: Default> Default for AList<T> {
     fn default() -> Self {
         Self::new()
@@ -162,6 +196,25 @@ mod tests {
         assert_eq!("None", l.to_string());
         assert_eq!(None, l.pop_front());
         assert_eq!(None, l.pop_back());
+    }
+
+    #[test]
+    fn satisfies_the_front_seq_contract() {
+        use crate::linked_list::test_util::check;
+
+        let mut l = AList::<i32>::new();
+        for v in [2, 3] {
+            l.push_back(v);
+        }
+        check(&l, &[2, 3]);
+
+        Seq::push_front(&mut l, 1);
+        check(&l, &[1, 2, 3]);
+
+        assert_eq!(Some(1), Seq::pop_front(&mut l));
+        check(&l, &[2, 3]);
+        assert_eq!(Some(2), Seq::pop_front(&mut l));
+        check(&l, &[3]);
     }
 
     #[test]

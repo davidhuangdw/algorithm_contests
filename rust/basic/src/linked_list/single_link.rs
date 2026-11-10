@@ -1,3 +1,4 @@
+use crate::linked_list::Seq;
 use std::fmt::Display;
 
 type Link<T> = Option<Box<ListNode<T>>>;
@@ -176,6 +177,39 @@ impl<T> List<T> {
     }
 }
 
+impl<T> Seq<T> for List<T> {
+    fn new() -> Self
+    where
+        T: Default,
+    {
+        List { head: None }
+    }
+
+    fn len(&self) -> usize {
+        List::len(self)
+    }
+
+    fn push_front(&mut self, v: T) {
+        List::push_front(self, v);
+    }
+
+    fn pop_front(&mut self) -> Option<T> {
+        List::pop_front(self)
+    }
+    
+    fn push_back(&mut self, v: T) {
+        List::push_back(self, v);
+    }
+
+    fn pop_back(&mut self) -> Option<T> {
+        List::pop_back(self)
+    }
+
+    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_> {
+        Box::new(List::iter(self).map(|node| &node.val))
+    }
+}
+
 impl<T: Display> Display for List<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for p in self.iter() {
@@ -204,6 +238,20 @@ mod tests {
         assert_eq!(None, l.pop_back());
         assert_eq!(None, l.remove(0));
         assert_eq!("None", l.to_string());
+    }
+
+    #[test]
+    fn satisfies_the_front_seq_contract() {
+        use crate::linked_list::test_util::check;
+
+        let mut l = List::from_slice(&[2, 3]);
+        check(&l, &[2, 3]);
+
+        Seq::push_front(&mut l, 1);
+        check(&l, &[1, 2, 3]);
+
+        assert_eq!(Some(1), Seq::pop_front(&mut l));
+        check(&l, &[2, 3]);
     }
 
     #[test]
