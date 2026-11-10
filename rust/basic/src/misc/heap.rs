@@ -12,7 +12,7 @@ impl<T: Ord> Heap<T> {
     pub fn from_vec(v: Vec<T>) -> Self {
         let n = v.len();
         let mut h = Self { data: v };
-        for i in (0..n/2).rev() {
+        for i in (0..n / 2).rev() {
             h.sift_down(i);
         }
         h

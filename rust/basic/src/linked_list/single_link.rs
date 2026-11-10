@@ -196,7 +196,7 @@ impl<T> Seq<T> for List<T> {
     fn pop_front(&mut self) -> Option<T> {
         List::pop_front(self)
     }
-    
+
     fn push_back(&mut self, v: T) {
         List::push_back(self, v);
     }

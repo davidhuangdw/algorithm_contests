@@ -1,4 +1,4 @@
-use crate::multiset::Multiset;
+use super::multiset::Multiset;
 use rand::RngExt;
 
 type Link<T> = Option<Box<Node<T>>>;
@@ -87,21 +87,21 @@ fn size<T: Ord>(node: &Link<T>) -> usize {
 }
 
 fn kth<T: Ord>(node: &Link<T>, mut k: usize) -> Option<&T> {
-        if node.is_none() || k >= size(node) {
-            return None
+    if node.is_none() || k >= size(node) {
+        return None;
+    }
+    let mut u = node.as_ref();
+    while let Some(nd) = u {
+        if k < size(&nd.l) {
+            u = nd.l.as_ref();
+        } else if k < nd.size - size(&nd.r) {
+            return Some(&nd.v);
+        } else {
+            k -= nd.size - size(&nd.r);
+            u = nd.r.as_ref();
         }
-        let mut u = node.as_ref();
-        while let Some(nd) = u {
-            if k < size(&nd.l) {
-                u = nd.l.as_ref();
-            }else if k < nd.size - size(&nd.r) {
-                return Some(&nd.v)
-            }else {
-                k -= nd.size - size(&nd.r);
-                u = nd.r.as_ref();
-            }
-        }
-        None
+    }
+    None
 }
 
 #[derive(Debug)]
@@ -159,7 +159,7 @@ impl<T: Ord> Treap<T> {
             if nd.v < *x {
                 cnt += nd.size - size(&nd.r);
                 u = nd.r.as_ref();
-            }else {
+            } else {
                 u = nd.l.as_ref();
             }
         }
@@ -184,7 +184,6 @@ impl<T: Ord> Treap<T> {
     pub fn kth(&self, k: usize) -> Option<&T> {
         kth(&self.root, k)
     }
-
 }
 
 impl<T: Ord> Default for Treap<T> {
@@ -221,8 +220,8 @@ impl<T: Ord> Multiset<T> for Treap<T> {
 
 #[cfg(test)]
 mod tests {
+    use super::super::multiset::test_util::check;
     use super::*;
-    use crate::multiset::test_util::check;
 
     #[test]
     fn new_treap_is_empty() {

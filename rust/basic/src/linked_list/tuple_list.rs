@@ -7,7 +7,9 @@ pub enum Lst<T> {
 }
 
 use std::{
-    fmt::Display, iter, mem::{replace, swap, take},
+    fmt::Display,
+    iter,
+    mem::{replace, swap, take},
 };
 
 use Lst::*;
@@ -87,7 +89,7 @@ impl<T> Lst<T> {
     pub fn pop_back(&mut self) -> Option<T> {
         let mut wrap = Box::new(replace(self, Nil));
         let mut u = &mut wrap;
-        while u.has_next(){
+        while u.has_next() {
             u = u.get_next().unwrap();
         }
         let last = take(&mut **u);

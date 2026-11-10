@@ -141,11 +141,11 @@ impl<T> Seq<T> for AList<T> {
     fn pop_front(&mut self) -> Option<T> {
         AList::pop_front(self)
     }
-    
+
     fn push_back(&mut self, v: T) {
         AList::push_back(self, v);
     }
-    
+
     fn pop_back(&mut self) -> Option<T> {
         AList::pop_back(self)
     }
