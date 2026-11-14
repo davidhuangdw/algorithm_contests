@@ -1,6 +1,6 @@
 use std::{
     cell::RefCell,
-    fmt::Display,
+    fmt::{Debug, Display},
     rc::{Rc, Weak},
 };
 
@@ -11,18 +11,6 @@ pub struct DNode<T = i32> {
     pub prev: Option<Weak<RefCell<DNode<T>>>>,
 }
 type DLink<T> = Rc<RefCell<DNode<T>>>;
-
-fn insert_after<T>(link: &DLink<T>, val: T) {
-    let prev = link.clone();
-    let next = prev.borrow().next.clone().unwrap();
-    let node = Rc::new(RefCell::new(DNode {
-        val,
-        next: Some(next.clone()),
-        prev: Some(Rc::downgrade(&prev)),
-    }));
-    next.borrow_mut().prev = Some(Rc::downgrade(&node));
-    prev.borrow_mut().next = Some(node);
-}
 
 #[derive(Debug)]
 pub struct DList<T = i32> {
@@ -55,13 +43,9 @@ impl<T> DList<T> {
         l
     }
     pub fn iter(&self) -> impl Iterator<Item = DLink<T>> {
-        std::iter::successors(self.first(), |node| {
-            let nxt = node.borrow().next.clone()?;
-            if Rc::ptr_eq(&nxt, &self.tail) {
-                None
-            } else {
-                Some(nxt)
-            }
+        let first = next_link(&self.head).filter(|node| !Rc::ptr_eq(node, &self.tail));
+        std::iter::successors(first, |node| {
+            next_link(node).filter(|nxt| !Rc::ptr_eq(nxt, &self.tail))
         })
     }
 
@@ -73,35 +57,77 @@ impl<T> DList<T> {
         self.size == 0
     }
 
-    pub fn first(&self) -> Option<DLink<T>> {
-        if self.is_empty() {
-            None
-        } else {
-            self.head.borrow().next.clone()
-        }
-    }
-
     pub fn push_front(&mut self, val: T) {
         insert_after(&self.head, val);
         self.size += 1;
     }
 
-    pub fn pop_front(&mut self) -> Option<DLink<T>> {
-        let link = self.first()?;
-
-        let prev = self.head.clone();
-        let next = link.borrow().next.clone().unwrap();
-        prev.borrow_mut().next = Some(next.clone());
-        next.borrow_mut().prev = Some(Rc::downgrade(&prev));
-        self.size -= 1;
-
-        Some(link)
+    pub fn pop_front(&mut self) -> Option<T>
+    where
+        T: Debug,
+    {
+        if self.is_empty() {
+            return None;
+        }
+        let mut cur = next_link(&self.head).unwrap();
+        self.pop_link(&mut cur);
+        Some(take_link(cur))
     }
 
     pub fn push_back(&mut self, val: T) {
-        let last = self.tail.borrow().prev.as_ref().unwrap().upgrade().unwrap();
+        let last = prev_link(&self.tail).unwrap();
         insert_after(&last, val);
         self.size += 1;
+    }
+
+    pub fn pop_back(&mut self) -> Option<T>
+    where
+        T: Debug,
+    {
+        if self.is_empty() {
+            return None;
+        }
+        let mut cur = prev_link(&self.tail).unwrap();
+        self.pop_link(&mut cur);
+        Some(take_link(cur))
+    }
+
+    fn pop_link(&mut self, cur: &mut DLink<T>) {
+        let prev = prev_link(&cur).unwrap();
+        let next = next_link(&cur).unwrap();
+        prev.borrow_mut().next = Some(next.clone());
+        next.borrow_mut().prev = Some(Rc::downgrade(&prev));
+        self.size -= 1;
+    }
+}
+
+fn insert_after<T>(link: &DLink<T>, val: T) {
+    let prev = link;
+    let next = next_link(link).unwrap();
+    let cur = Rc::new(RefCell::new(DNode {
+        val,
+        next: Some(next.clone()),
+        prev: Some(Rc::downgrade(link)),
+    }));
+    next.borrow_mut().prev = Some(Rc::downgrade(&cur));
+    prev.borrow_mut().next = Some(cur);
+}
+
+fn next_link<T>(l: &DLink<T>) -> Option<DLink<T>> {
+    l.borrow().next.clone()
+}
+
+fn prev_link<T>(l: &DLink<T>) -> Option<DLink<T>> {
+    l.borrow().prev.as_ref()?.upgrade().clone()
+}
+
+fn take_link<T>(l: DLink<T>) -> T
+where
+    T: Debug,
+{
+    match Rc::try_unwrap(l) {
+        Ok(cell) => cell.into_inner().val,
+        Err(err) => panic!("take_dlink: {:?}", err),
     }
 }
 
@@ -133,9 +159,8 @@ mod tests {
         l.iter().map(|node| node.borrow().val).collect()
     }
 
-    /// `pop_front` hands back the node, so read the value out of it.
     fn pop_val(l: &mut DList<i32>) -> Option<i32> {
-        l.pop_front().map(|node| node.borrow().val)
+        l.pop_front()
     }
 
     #[test]
@@ -143,7 +168,6 @@ mod tests {
         let mut l = DList::<i32>::new();
         assert_eq!(0, l.len());
         assert!(l.is_empty());
-        assert!(l.first().is_none());
         assert_eq!(0, l.iter().count());
         assert_eq!("None", l.to_string());
         assert_eq!(None, pop_val(&mut l));
@@ -158,7 +182,7 @@ mod tests {
         assert_eq!("1 -> 2 -> 3 -> None", l.to_string());
 
         // Forward links skip the tail sentinel, backward links reach the head.
-        let first = l.first().unwrap();
+        let first = l.iter().next().unwrap();
         assert_eq!(1, first.borrow().val);
         let second = first.borrow().next.clone().unwrap();
         assert_eq!(2, second.borrow().val);
@@ -196,7 +220,7 @@ mod tests {
         assert_eq!(vec![1], values(&l));
         l.push_front(0);
         assert_eq!(vec![0, 1], values(&l));
-        assert_eq!(Some(0), l.first().map(|n| n.borrow().val));
+        assert_eq!(Some(0), l.iter().next().map(|n| n.borrow().val));
         assert_eq!("0 -> 1 -> None", l.to_string());
     }
 
@@ -235,7 +259,7 @@ mod tests {
         assert_eq!(Some(2), pop_val(&mut l));
         assert_eq!(Some(3), pop_val(&mut l));
         assert!(l.is_empty());
-        assert!(l.first().is_none());
+        assert!(l.iter().next().is_none());
         assert_eq!("None", l.to_string());
 
         // Popping an empty list is a no-op.
@@ -268,6 +292,6 @@ mod tests {
         assert_eq!("b -> a -> None", l.to_string());
 
         let popped = l.pop_front().expect("list is not empty");
-        assert_eq!("b", popped.borrow().val);
+        assert_eq!("b", popped);
     }
 }
