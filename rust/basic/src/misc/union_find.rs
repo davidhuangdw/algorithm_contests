@@ -1,15 +1,14 @@
 #[derive(Debug)]
-struct UnionFindSet {
+pub struct UnionFindSet {
     fa: Vec<usize>,
     size: Vec<usize>,
-    n: usize,
 }
 
 impl UnionFindSet {
     pub fn new(n: usize) -> Self {
         let fa = (0..n).collect();
         let size = vec![1; n];
-        UnionFindSet { fa, size, n }
+        UnionFindSet { fa, size }
     }
 
     // find root
@@ -58,7 +57,6 @@ mod tests {
             assert_eq!(r, u.fa[i], "fa[{i}] not compressed");
         }
         assert!(u.same_set(0, 4));
-        assert_eq!(0, UnionFindSet::new(0).n);
     }
 
     #[test]
